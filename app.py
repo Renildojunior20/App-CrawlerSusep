@@ -31,7 +31,11 @@ uploaded_file = st.file_uploader("Carregue seu arquivo Excel", type=["xlsx"])
 if uploaded_file:
     df = pd.read_excel(uploaded_file, sheet_name='Planilha1', dtype={'CNPJ': str}, engine='openpyxl')
     df['CNPJ'] = df['CNPJ'].apply(limpar_cnpj)
-    df['Validação'] = df['Validação'].astype(object)
+    # Garante que a coluna 'Validação' exista e define o tipo corretamente
+    if 'Validação' not in df.columns:
+        df['Validação'] = None
+    else:
+        df['Validação'] = df['Validação'].astype(object)
 
     url_base = "https://www2.susep.gov.br/safe/corretoresapig/dadospublicos/pesquisar?tipoPessoa=PJ&cnpj={CNPJ_key}&cpfCnpj={CNPJ_key}&page=1"
     cert_path = "susep.gov.br.pem"  # Atualize para o caminho correto
